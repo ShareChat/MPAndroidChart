@@ -135,7 +135,6 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
     protected XAxisRenderer mXAxisRenderer;
 
-
     // /** the approximator object used for data filtering */
     // private Approximator mApproximator;
 
