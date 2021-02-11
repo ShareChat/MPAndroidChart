@@ -28,8 +28,6 @@ import com.github.mikephil.charting.jobs.AnimatedZoomJob;
 import com.github.mikephil.charting.jobs.MoveViewJob;
 import com.github.mikephil.charting.jobs.ZoomJob;
 import com.github.mikephil.charting.listener.BarLineChartTouchListener;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnDrawListener;
 import com.github.mikephil.charting.renderer.XAxisRenderer;
 import com.github.mikephil.charting.renderer.YAxisRenderer;
@@ -46,7 +44,7 @@ import com.github.mikephil.charting.utils.Utils;
 @SuppressLint("RtlHardcoded")
 public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<? extends
         IBarLineScatterCandleBubbleDataSet<? extends Entry>>>
-        extends Chart<T> implements BarLineScatterCandleBubbleDataProvider, OnChartGestureListener {
+        extends Chart<T> implements BarLineScatterCandleBubbleDataProvider {
 
     /**
      * the maximum number of entries to which values will be drawn
@@ -137,10 +135,6 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
     protected XAxisRenderer mXAxisRenderer;
 
-    /**
-     * Sets the selected Y Index value of the BarChart, defaults to null
-     */
-    private Float selectedYIndex = null;
 
     // /** the approximator object used for data filtering */
     // private Approximator mApproximator;
@@ -173,8 +167,6 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         mXAxisRenderer = new XAxisRenderer(mViewPortHandler, mXAxis, mLeftAxisTransformer);
 
         setHighlighter(new ChartHighlighter(this));
-
-        setOnChartGestureListener(this);
 
         mChartTouchListener = new BarLineChartTouchListener(this, mViewPortHandler.getMatrixTouch(), 3f);
 
@@ -1678,68 +1670,6 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
             mViewPortHandler.centerViewPort(mOnSizeChangedBuffer, this);
         } else {
             mViewPortHandler.refresh(mViewPortHandler.getMatrixTouch(), this, true);
-        }
-    }
-    /**
-     * intercept single tapped event of chart
-     *
-     */
-    @Override
-    public void onChartSingleTapped(MotionEvent me) {
-        // Touched chart entry
-        Entry entry = getEntryByTouchPoint(me.getX(), me.getY());
-        if (entry != null) {
-            selectedYIndex = me.getY();
-        } else {
-            selectedYIndex = null;
-        }
-    }
-
-    @Override
-    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-        Log.i("Gesture", "START");
-    }
-
-    @Override
-    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-        Log.i("Gesture", "END");
-    }
-
-    @Override
-    public void onChartLongPressed(MotionEvent me) {
-        Log.i("LongPress", "Chart long pressed.");
-    }
-
-    @Override
-    public void onChartDoubleTapped(MotionEvent me) {
-        Log.i("DoubleTap", "Chart double-tapped.");
-    }
-
-    @Override
-    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-        Log.i("Fling", "Chart fling. VelocityX: " + velocityX + ", VelocityY: " + velocityY);
-    }
-
-    @Override
-    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-        Log.i("Scale / Zoom", "ScaleX: " + scaleX + ", ScaleY: " + scaleY);
-    }
-
-    @Override
-    public void onChartTranslate(MotionEvent me, float dX, float dY) {
-        Log.i("Translate / Move", "dX: " + dX + ", dY: " + dY);
-    }
-
-    /**
-     * check the selected Y index is part of the filled area of bar or unfilled area of bar
-     * @param high         - the highlight object
-     * @param callListener - call the listener
-     */
-    public void highlightValue(Highlight high, boolean callListener) {
-        if (selectedYIndex != null && high != null && high.getYPx() <= selectedYIndex) {
-            super.highlightValue(high, callListener);
-        } else {
-            super.highlightValue(null, callListener);
         }
     }
 }

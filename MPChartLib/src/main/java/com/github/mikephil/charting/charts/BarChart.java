@@ -4,14 +4,18 @@ import android.content.Context;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.BarHighlighter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.renderer.BarChartRenderer;
 
 /**
@@ -19,7 +23,7 @@ import com.github.mikephil.charting.renderer.BarChartRenderer;
  *
  * @author Philipp Jahoda
  */
-public class BarChart extends BarLineChartBase<BarData> implements BarDataProvider {
+public class BarChart extends BarLineChartBase<BarData> implements BarDataProvider, OnChartGestureListener {
 
     /**
      * flag that indicates whether the highlight should be full-bar oriented, or single-value?
@@ -35,6 +39,11 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
      * if set to true, a grey area is drawn behind each bar that indicates the maximum value
      */
     private boolean mDrawBarShadow = false;
+
+    /**
+     * Sets the selected Y Index value of the BarChart, defaults to null
+     */
+    private Float selectedYIndex = null;
 
     private boolean mFitBars = false;
 
@@ -57,6 +66,8 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
         mRenderer = new BarChartRenderer(this, mAnimator, mViewPortHandler);
 
         setHighlighter(new BarHighlighter(this));
+
+        setOnChartGestureListener(this);
 
         getXAxis().setSpaceMin(0.5f);
         getXAxis().setSpaceMax(0.5f);
@@ -253,6 +264,55 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
         } else {
             getBarData().groupBars(fromX, groupSpace, barSpace);
             notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * intercept single tapped event of chart
+     *
+     */
+    @Override
+    public void onChartSingleTapped(MotionEvent me) {
+        // Touched chart entry
+        Entry entry = getEntryByTouchPoint(me.getX(), me.getY());
+        if (entry != null) {
+            selectedYIndex = me.getY();
+        } else {
+            selectedYIndex = null;
+        }
+    }
+
+    @Override
+    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {}
+
+    @Override
+    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) { }
+
+    @Override
+    public void onChartLongPressed(MotionEvent me) { }
+
+    @Override
+    public void onChartDoubleTapped(MotionEvent me) { }
+
+    @Override
+    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) { }
+
+    @Override
+    public void onChartScale(MotionEvent me, float scaleX, float scaleY) { }
+
+    @Override
+    public void onChartTranslate(MotionEvent me, float dX, float dY) { }
+
+    /**
+     * check the selected Y index is part of the filled area of bar or unfilled area of bar
+     * @param high         - the highlight object
+     * @param callListener - call the listener
+     */
+    public void highlightValue(Highlight high, boolean callListener) {
+        if (selectedYIndex != null && high != null && high.getYPx() <= selectedYIndex) {
+            super.highlightValue(high, callListener);
+        } else {
+            super.highlightValue(null, callListener);
         }
     }
 }
