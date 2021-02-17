@@ -203,6 +203,9 @@ public class XAxisRenderer extends AxisRenderer {
             if (mViewPortHandler.isInBoundsX(x)) {
 
                 String label = mXAxis.getValueFormatter().getFormattedValue(mXAxis.mEntries[i / 2], mXAxis);
+                if (mXAxis.getColorFormatter() != null) {
+                    mAxisLabelPaint.setColor(mXAxis.getColorFormatter().getColor(i/2, null, null));
+                }
 
                 if (mXAxis.isAvoidFirstLastClippingEnabled()) {
 
