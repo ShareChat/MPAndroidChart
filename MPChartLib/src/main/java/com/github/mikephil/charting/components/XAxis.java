@@ -1,6 +1,7 @@
 
 package com.github.mikephil.charting.components;
 
+import com.github.mikephil.charting.formatter.ColorFormatter;
 import com.github.mikephil.charting.utils.Utils;
 
 /**
@@ -58,6 +59,11 @@ public class XAxis extends AxisBase {
      *
      */
     private int mMultiLineCount = 1;
+
+    /**
+     * custom color formatter that is used to color the x axis label
+     */
+    protected ColorFormatter mAxisColorFormatter;
 
     /**
      * the position of the x-labels relative to the chart
@@ -162,5 +168,22 @@ public class XAxis extends AxisBase {
      */
     public void setMultiLineCount(int count) {
         mMultiLineCount = count;
+    }
+
+    /**
+     * Returns the formatter used for coloring the x axis labels.
+     *
+     * @return
+     */
+    public ColorFormatter getColorFormatter() {
+        return mAxisColorFormatter;
+    }
+
+    /**
+     * Sets the formatter to be used for coloring the x axis labels
+     * @param formatter
+     */
+    public void setColorFormatter(ColorFormatter formatter) {
+        mAxisColorFormatter = formatter;
     }
 }
